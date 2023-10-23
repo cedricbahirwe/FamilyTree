@@ -26,9 +26,7 @@ struct ContentView: View {
     
     var body: some View {
         ScrollView([.horizontal, .vertical], showsIndicators: false) {
-            VStack(spacing: TreeLayout.lineHeight) {
-                TrialView()
-            }
+            GenealogyTreeView()
             .fixedSize()
             .frame(width: screen.width, height: screen.height)
             .scaleEffect(currentZoom + totalZoom)
@@ -72,27 +70,43 @@ struct ContentView: View {
     ContentView()
 }
 
-struct TrialView: View {
-    var accentColor = TreeLayout.mainColor
-    var offset = TreeLayout.lineOffset
-    var rootNode = trial()
+struct GenealogyTreeView: View {
+    private var dataSource = GenealogyDataSource()
     
     var body: some View {
         
+        Group {
+            if let tree = dataSource.tree{
+                FamilyNodeView(node: tree)
+            } else {
+                ProgressView("Loading Genealogy Tree")
+            }
+        }
+        .onAppear() {
+            dataSource.fetch()
+        }
+    }
+    
+}
+
+struct FamilyNodeView: View {
+    let node: FamilyNode<String>
+    var offset = TreeLayout.lineOffset
+    var accentColor = TreeLayout.mainColor
+
+    var body: some View {
         VStack(spacing: offset) {
-            intro(rootNode)
+            intro(node)
                 .offset(y: -TreeLayout.nodeHeight-TreeLayout.lineOffset)
                 .overlay {
                     HStack(alignment: .top, spacing: 15) {
-                        ForEach(rootNode.children) { fdescendant in
-                            TrialView(rootNode: fdescendant)
-//                                .offset(y: -TreeLayout.nodeHeight)
+                        ForEach(node.children) { childNode in
+                            FamilyNodeView(node: childNode)
                         }
                     }
                     .offset(y: TreeLayout.nodeHeight + offset)
                 }
         }
-        
     }
     
     @ViewBuilder
@@ -139,116 +153,5 @@ struct TrialView: View {
                 }
             }
     }
-    
-    typealias Node = FamilyNode
-    
-    static func otherMusoles() -> [FamilyNode<String>] {
-        [
-            "MWENGEHERWA", "NAMWEZI",
-            "MUKEMBANYI", "ZIRIMWABA",
-            "CIBALONZA", "CHARLOTTE", "CIREZI"
-        ].map(FamilyNode.init)
-    }
-    
-    
-    static func otherBahirwes() -> [FamilyNode<String>] {
-        let ciri = Node(value: "CIRIMWAMI")
-        let aga = Node(value: "AGANZE")
-        let nabi = Node(value: "NABINTU")
-        let bulo = Node(value: "BULONZA")
-        let ira = Node(value: "IRAGI")
-        
-        return [ciri, aga, nabi, bulo, ira]
-    }
-    
-    static func otherKanywenges() -> [FamilyNode<String>] {
-        ["MWA BAHENE", "MUSOLE","MWA MUNANA"].map(FamilyNode.init)
-    }
-    
-    static func otherMukembanyis() -> [FamilyNode<String>] {
-        [
-            "BISIMA", "KAJIBWAMI", "KUJIRAKWINJA", "MARIO?", "BACIKENGE", "KULIMUSHI",
-            "BAHIRWE",
-            "NSIMIRE", "MAPENDO","SCOLASTIC", "VELENTINE", "NZIGIRE"
-            
-        ].map(FamilyNode.init)
-    }
-    
-    static func trial() -> Node<String> {
-        let birhonga = Node(value: "BIRHONGA")
-        
-        // 1st Generation
-        let kanywenge = Node(value: "KANYWENGE")
-        birhonga.add(child: kanywenge)
-        
-        // 2nd Generation
-        kanywenge.add(children: otherKanywenges())
-        
-        if let musole = kanywenge.search(value: "MUSOLE") {
-            musole.add(children: otherMusoles())
-            // 3rd Generation
-            if let mukembanyi = musole.search(value: "MUKEMBANYI") {
-                // 4th Generation
-                mukembanyi.add(children: otherMukembanyis())
-                if let bahirwe = mukembanyi.search(value: "BAHIRWE") {
-                    // 5th Generation
-                    bahirwe.add(children: otherBahirwes())
-                }
-            }
-        }
-        
-        return birhonga
-    }
-}
 
-
-class FamilyNode<T>: Identifiable {
-    var value: T
-    var children: [FamilyNode] = []
-    weak var parent: FamilyNode?
-    
-    init(value: T) {
-        self.value = value
-    }
-    
-    func add(child: FamilyNode) {
-        children.append(child)
-        child.parent = self
-    }
-    
-    func add(children elements: [FamilyNode]) {
-        children.append(contentsOf: elements)
-        elements.forEach { $0.parent = self }
-    }
-    
-}
-
-// 1
-extension FamilyNode: CustomStringConvertible {
-    // 2
-    var description: String {
-        // 3
-        var text = "\(value)"
-        
-        // 4
-        if !children.isEmpty {
-            text += " {" + children.map { $0.description }.joined(separator: ", ") + "} "
-        }
-        return text
-    }
-}
-
-extension FamilyNode where T: Equatable {
-    // 2.
-    func search(value: T) -> FamilyNode? {
-        if value == self.value {
-            return self
-        }
-        for child in children {
-            if let found = child.search(value: value) {
-                return found
-            }
-        }
-        return nil
-    }
 }

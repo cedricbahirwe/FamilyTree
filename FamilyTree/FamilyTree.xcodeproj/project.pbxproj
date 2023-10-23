@@ -12,7 +12,8 @@
 		CB975DCE2AE5A59C00AB375E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB975DCD2AE5A59C00AB375E /* Assets.xcassets */; };
 		CB975DD12AE5A59C00AB375E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB975DD02AE5A59C00AB375E /* Preview Assets.xcassets */; };
 		CB975DD82AE5AEA500AB375E /* Other.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB975DD72AE5AEA500AB375E /* Other.swift */; };
-		CB975DDA2AE67A0600AB375E /* EE.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB975DD92AE67A0600AB375E /* EE.swift */; };
+		CB975DDC2AE68A0100AB375E /* FamilyNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB975DDB2AE68A0100AB375E /* FamilyNode.swift */; };
+		CB975DE02AE68A3C00AB375E /* GenealogyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB975DDF2AE68A3C00AB375E /* GenealogyDataSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,7 +23,8 @@
 		CB975DCD2AE5A59C00AB375E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CB975DD02AE5A59C00AB375E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		CB975DD72AE5AEA500AB375E /* Other.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Other.swift; sourceTree = "<group>"; };
-		CB975DD92AE67A0600AB375E /* EE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EE.swift; sourceTree = "<group>"; };
+		CB975DDB2AE68A0100AB375E /* FamilyNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyNode.swift; sourceTree = "<group>"; };
+		CB975DDF2AE68A3C00AB375E /* GenealogyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenealogyDataSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,8 +59,9 @@
 			children = (
 				CB975DC92AE5A59A00AB375E /* FamilyTreeApp.swift */,
 				CB975DCB2AE5A59A00AB375E /* ContentView.swift */,
+				CB975DDF2AE68A3C00AB375E /* GenealogyDataSource.swift */,
+				CB975DDB2AE68A0100AB375E /* FamilyNode.swift */,
 				CB975DD72AE5AEA500AB375E /* Other.swift */,
-				CB975DD92AE67A0600AB375E /* EE.swift */,
 				CB975DCD2AE5A59C00AB375E /* Assets.xcassets */,
 				CB975DCF2AE5A59C00AB375E /* Preview Content */,
 			);
@@ -144,8 +147,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB975DD82AE5AEA500AB375E /* Other.swift in Sources */,
-				CB975DDA2AE67A0600AB375E /* EE.swift in Sources */,
+				CB975DDC2AE68A0100AB375E /* FamilyNode.swift in Sources */,
 				CB975DCC2AE5A59A00AB375E /* ContentView.swift in Sources */,
+				CB975DE02AE68A3C00AB375E /* GenealogyDataSource.swift in Sources */,
 				CB975DCA2AE5A59A00AB375E /* FamilyTreeApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
