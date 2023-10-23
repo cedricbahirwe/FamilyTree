@@ -19,6 +19,7 @@ enum TreeLayout {
 }
 
 struct ContentView: View {
+    @State private var datasource = GenealogyDataSource()
     @State private var currentZoom = 0.0
     @State private var totalZoom = 1.0
     
@@ -28,7 +29,7 @@ struct ContentView: View {
         ScrollView([.horizontal, .vertical], showsIndicators: false) {
             GenealogyTreeView()
             .fixedSize()
-            .frame(width: screen.width, height: screen.height)
+            .frame(width: screen.width, height: screen.height, alignment: .top)
             .scaleEffect(currentZoom + totalZoom)
             .contentShape(Rectangle())
             .gesture(
@@ -41,7 +42,7 @@ struct ContentView: View {
                         currentZoom = 0
                     }
             )
-            .padding(100)
+            .padding(.horizontal, 300)
 
         }
         .overlay(alignment: .topTrailing) {
@@ -63,6 +64,7 @@ struct ContentView: View {
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
             .padding()
         }
+        .environment(datasource)
     }
 }
 
@@ -71,12 +73,12 @@ struct ContentView: View {
 }
 
 struct GenealogyTreeView: View {
-    private var dataSource = GenealogyDataSource()
+    @Environment(GenealogyDataSource.self) private var dataSource
     
     var body: some View {
         
         Group {
-            if let tree = dataSource.tree{
+            if let tree = dataSource.tree {
                 FamilyNodeView(node: tree)
             } else {
                 ProgressView("Loading Genealogy Tree")
@@ -97,7 +99,7 @@ struct FamilyNodeView: View {
     var body: some View {
         VStack(spacing: offset) {
             intro(node)
-                .offset(y: -TreeLayout.nodeHeight-TreeLayout.lineOffset)
+//                .offset(y: -TreeLayout.nocdeHeight-TreeLayout.lineOffset)
                 .overlay {
                     HStack(alignment: .top, spacing: 15) {
                         ForEach(node.children) { childNode in
