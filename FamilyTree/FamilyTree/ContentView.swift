@@ -8,43 +8,62 @@
 import SwiftUI
 
 enum TreeLayout {
-    static let lineHeight: CGFloat = 10
-    static let lineOffset: CGFloat = 20
+    static let lineHeight: CGFloat = 20
+    static let lineOffset: CGFloat = 40
     
     static let mainColor = Color.blue
     
-    static let nodeWidth = 160
-    static let nodeHeight = 60
+    static let nodeWidth: CGFloat = 160
+    static let nodeHeight: CGFloat = 60
     static let nodeSize = CGSize(width: nodeWidth, height: nodeHeight)
 }
 
 struct ContentView: View {
     @State private var currentZoom = 0.0
     @State private var totalZoom = 1.0
-    @State private var rotationAngle = Angle.zero
     
     private let screen = UIScreen.main.bounds.size
     
     var body: some View {
-        ScrollView([.horizontal, .vertical]) {
+        ScrollView([.horizontal, .vertical], showsIndicators: false) {
             VStack(spacing: TreeLayout.lineHeight) {
                 TrialView()
-                    .frame(width: screen.width, height: screen.height)
-//                    .background(.green)
-                    .scaleEffect(currentZoom + totalZoom)
-                    .rotationEffect(rotationAngle)
-                    .contentShape(Rectangle())
-                    .gesture(
-                        MagnifyGesture()
-                            .onChanged { value in
-                                currentZoom = value.magnification - 1
-                            }
-                            .onEnded { value in
-                                totalZoom += currentZoom
-                                currentZoom = 0
-                            }
-                    )
             }
+            .fixedSize()
+            .frame(width: screen.width, height: screen.height)
+            .scaleEffect(currentZoom + totalZoom)
+            .contentShape(Rectangle())
+            .gesture(
+                MagnifyGesture()
+                    .onChanged { value in
+                        currentZoom = value.magnification - 1
+                    }
+                    .onEnded { value in
+                        totalZoom += currentZoom
+                        currentZoom = 0
+                    }
+            )
+            .padding(100)
+
+        }
+        .overlay(alignment: .topTrailing) {
+            VStack(alignment: .leading) {
+                HStack(alignment: .top) {
+                    Text("Légende:")
+                    VStack(alignment: .leading) {
+                        Text("M+ = Masculin décédé")
+                        Text("F+ = Féminin décédée")
+                        Text("?  = Disparu")
+                    }
+                }
+                Text("**N.B.**: Tu es de la cinquième génération à partir de l'ancêtre **BIRHONGA**.")
+            }
+            .font(.callout)
+            .fontDesign(.monospaced)
+            .padding()
+            .frame(maxWidth: 320, alignment: .leading)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
+            .padding()
         }
     }
 }
@@ -53,30 +72,27 @@ struct ContentView: View {
     ContentView()
 }
 
-
 struct TrialView: View {
     var accentColor = TreeLayout.mainColor
     var offset = TreeLayout.lineOffset
     var rootNode = trial()
+    
     var body: some View {
         
         VStack(spacing: offset) {
-//            ZStack {
             intro(rootNode)
+                .offset(y: -TreeLayout.nodeHeight-TreeLayout.lineOffset)
                 .overlay {
                     HStack(alignment: .top, spacing: 15) {
                         ForEach(rootNode.children) { fdescendant in
                             TrialView(rootNode: fdescendant)
-//                                .background([Color.purple, Color.red, Color.green, Color.pink, Color.brown, Color.orange].randomElement()!)
+//                                .offset(y: -TreeLayout.nodeHeight)
                         }
                     }
-                    .offset(y: 60 + offset)
-//                    .fixedSize(horizontal: true, vertical: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                    .offset(y: TreeLayout.nodeHeight + offset)
                 }
-//            .offset(y: 60 + offset)
-//            .fixedSize()
-//            .background(.green)
         }
+        
     }
     
     @ViewBuilder
@@ -86,7 +102,7 @@ struct TrialView: View {
             .padding()
             .minimumScaleFactor(0.5)
             .lineLimit(1)
-            .frame(width: 160, height: 60)
+            .frame(width: TreeLayout.nodeWidth, height: TreeLayout.nodeHeight)
             .border(accentColor)
             .frame(maxWidth: .infinity)
             .overlay(alignment: .bottom) {
@@ -101,23 +117,17 @@ struct TrialView: View {
                         
                         accentColor.frame(width: 1, height: TreeLayout.lineHeight)
                         
-//                        GeometryReader { geo in
-                            accentColor
-//                                .fixedSize(horizontal: false, vertical: true)
-//                                .frame(width: geo.size.width - 164, height: 1)
-                                .frame(
-                                    width: (160 * CGFloat(node.children.count)) + (15 * CGFloat(node.children.count-1)) - 160,
-                                    height: 1
-                                )
-                                .background(.brown)
-//                                .frame(maxWidth: .infinity)
-//                        }
-//                        .frame(height: 1)
+                        accentColor
+                            .frame(height: 1)
+                            .frame(
+                                width: (TreeLayout.nodeWidth * CGFloat(node.children.count)) + (15 * CGFloat(node.children.count-1)) - TreeLayout.nodeWidth,
+                                height: 1
+                            )
+                        
                         HStack(spacing: 15) {
                             ForEach(0..<node.children.count, id: \.self) { i in
                                 accentColor
                                     .frame(width: 1, height: TreeLayout.lineHeight)
-//                                    .frame(maxWidth: 300)
                                 if i+1 != node.children.count {
                                     Spacer()
                                 }
@@ -125,10 +135,6 @@ struct TrialView: View {
                         }
                         
                     }
-//                    .background(Color.teal)
-                    
-//                    .offset(x: -20)
-//                    .frame(maxWidth: .infinity)
                     .offset(y: offset)
                 }
             }
@@ -143,14 +149,7 @@ struct TrialView: View {
             "CIBALONZA", "CHARLOTTE", "CIREZI"
         ].map(FamilyNode.init)
     }
-    static func otherMukembanyis() -> [FamilyNode<String>] {
-        [
-            "BISIMA", "KAJIBWAMI", "KUJIRAKWINJA", "MARIO?", "BACIKENGE", "KULIMUSHI",
-            "BAHIRWE",
-            "NSIMIRE", "MAPENDO","SCOLASTIC", "VELENTINE", "NZIGIRE"
-            
-        ].map(FamilyNode.init)
-    }
+    
     
     static func otherBahirwes() -> [FamilyNode<String>] {
         let ciri = Node(value: "CIRIMWAMI")
@@ -166,6 +165,15 @@ struct TrialView: View {
         ["MWA BAHENE", "MUSOLE","MWA MUNANA"].map(FamilyNode.init)
     }
     
+    static func otherMukembanyis() -> [FamilyNode<String>] {
+        [
+            "BISIMA", "KAJIBWAMI", "KUJIRAKWINJA", "MARIO?", "BACIKENGE", "KULIMUSHI",
+            "BAHIRWE",
+            "NSIMIRE", "MAPENDO","SCOLASTIC", "VELENTINE", "NZIGIRE"
+            
+        ].map(FamilyNode.init)
+    }
+    
     static func trial() -> Node<String> {
         let birhonga = Node(value: "BIRHONGA")
         
@@ -177,6 +185,7 @@ struct TrialView: View {
         kanywenge.add(children: otherKanywenges())
         
         if let musole = kanywenge.search(value: "MUSOLE") {
+            musole.add(children: otherMusoles())
             // 3rd Generation
             if let mukembanyi = musole.search(value: "MUKEMBANYI") {
                 // 4th Generation
@@ -188,7 +197,6 @@ struct TrialView: View {
             }
         }
         
-        print(birhonga)
         return birhonga
     }
 }
