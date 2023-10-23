@@ -28,22 +28,22 @@ struct ContentView: View {
     var body: some View {
         ScrollView([.horizontal, .vertical], showsIndicators: false) {
             GenealogyTreeView()
-            .fixedSize()
-            .frame(width: screen.width, height: screen.height, alignment: .top)
-            .scaleEffect(currentZoom + totalZoom)
-            .contentShape(Rectangle())
-            .gesture(
-                MagnifyGesture()
-                    .onChanged { value in
-                        currentZoom = value.magnification - 1
-                    }
-                    .onEnded { value in
-                        totalZoom += currentZoom
-                        currentZoom = 0
-                    }
-            )
-            .padding(.horizontal, 300)
-
+                .fixedSize()
+                .frame(width: screen.width, height: screen.height, alignment: .top)
+                .scaleEffect(currentZoom + totalZoom)
+                .contentShape(Rectangle())
+                .gesture(
+                    MagnifyGesture()
+                        .onChanged { value in
+                            currentZoom = value.magnification - 1
+                        }
+                        .onEnded { value in
+                            totalZoom += currentZoom
+                            currentZoom = 0
+                        }
+                )
+                .padding(.horizontal, 300)
+            
         }
         .overlay(alignment: .topTrailing) {
             VStack(alignment: .leading) {
@@ -95,11 +95,11 @@ struct FamilyNodeView: View {
     let node: FamilyNode<String>
     var offset = TreeLayout.lineOffset
     var accentColor = TreeLayout.mainColor
-
+    
     var body: some View {
         VStack(spacing: offset) {
             intro(node)
-//                .offset(y: -TreeLayout.nocdeHeight-TreeLayout.lineOffset)
+            //                .offset(y: -TreeLayout.nocdeHeight-TreeLayout.lineOffset)
                 .overlay {
                     HStack(alignment: .top, spacing: 15) {
                         ForEach(node.children) { childNode in
@@ -155,5 +155,5 @@ struct FamilyNodeView: View {
                 }
             }
     }
-
+    
 }

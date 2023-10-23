@@ -31,7 +31,7 @@ class FamilyNode<T>: Identifiable {
 extension FamilyNode: CustomStringConvertible {
     var description: String {
         var text = "\(value)"
-    
+        
         if !children.isEmpty {
             text += " {" + children.map { $0.description }.joined(separator: ", ") + "} "
         }
